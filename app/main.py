@@ -1,25 +1,35 @@
 import pandas as pd
-import json
+import sqlite3
 
-nome_arquivo = 'PORTES_2025.csv'
+# Nome do arquivo que você enviou
+data = 'colunas_separadas\coluna_UF.csv'
 
-try:
-    
-    # Lendo o arquivo CSV com pandas
-    df = pd.read_csv(nome_arquivo, sep=';', encoding='latin-1', dtype=str)
-    
-    # Convertendo o DataFrame para uma lista de dicionários
-    dados_em_lista_de_dicionarios = df.to_dict(orient='records')
-    
-    # Exibindo os primeiros dois registros para verificação
-    print(f"--- Resultado: Lista de Dicionários ({len(dados_em_lista_de_dicionarios)} registros no total) ---")
-    
-    # Usando json.dumps para formatar a saída e facilitar a leitura
-    for i in range(min(2, len(dados_em_lista_de_dicionarios))):
-        print(json.dumps(dados_em_lista_de_dicionarios[i], indent=2, ensure_ascii=False))
-    
-except FileNotFoundError:
-    print(f"Erro: O arquivo '{nome_arquivo}' não foi encontrado.")
-    print("Por favor, certifique-se de que o arquivo está no mesmo diretório que o script.")
-except Exception as e:
-    print(f"Ocorreu um erro inesperado: {e}")
+# 1. Crie um DataFrame de exemplo
+
+df = pd.DataFrame(data)
+
+# 2. Processo para extrair palavras únicas
+
+# Converte tudo para minúsculas
+# .str.findall(r'\b\w+\b') encontra todas as "palavras" (sequências de letras/números)
+# .sum() concatena todas as listas de palavras (de cada linha) em uma única lista
+todas_as_palavras = df['UF'].str.lower().str.findall(r'\b\w+\b').sum()
+
+# 3. Obtenha a lista de palavras únicas
+# Usar set() é uma forma Python pura e muito rápida de remover duplicatas
+palavras_unicas_set = set(todas_as_palavras)
+
+# Se preferir um array do NumPy (ordem de aparição) ou uma lista:
+palavras_unicas = pd.Series(todas_as_palavras).unique()
+palavras_unicas_lista = list(palavras_unicas_set)
+
+# Imprimir os resultados
+print("--- DataFrame Original ---")
+print(df)
+print("\n--- Todas as Palavras (com repetição) ---")
+print(todas_as_palavras)
+print("\n--- Palavras Únicas (como lista) ---")
+print(palavras_unicas_lista)
+
+print("\n--- Palavras Únicas (como array NumPy) ---")
+print(palavras_unicas)
