@@ -101,4 +101,5 @@ class Usuarios(Base):
     usuario_senha = Column(String, nullable=False)
     usuario_admin = Column(Boolean, nullable=False, default=False)
 
-
+db = engine
+Base = declarative_base()
