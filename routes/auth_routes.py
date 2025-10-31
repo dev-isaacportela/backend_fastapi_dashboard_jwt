@@ -31,7 +31,7 @@ async def create_user(user_schema: UserSchema, session: Session = Depends(get_se
     try:
         password_crypted = bcrypt_context.hash(pwd)
     except Exception as e:
-        # log aqui se precisar, e devolve erro genérico ao client
+        logger.error(f"Erro ao processar senha: {e}")
         raise HTTPException(status_code=500, detail="Erro ao processar senha")
     
     try:
